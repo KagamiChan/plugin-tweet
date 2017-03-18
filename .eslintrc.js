@@ -12,8 +12,12 @@ module.exports = {
 	},
 	'rules': {
 		'semi': ['error', 'never'],
-		'import/no-unresolved': [2, { ignore: ['views/.*'] }],
+		'import/no-unresolved': [2, { 'ignore': ['views/.*'] }],
     'react/jsx-filename-extension': 'off',
+    'no-underscore-dangle': ['error', { 'allowAfterThis': true }],
+    'import/extensions': ['error', { 'es': 'never' }],
+    'import/no-extraneous-dependencies': 'off',
+    'comma-dangle': ['error', 'always-multiline'],
 	},
   'settings': {
     'import/resolver': {
