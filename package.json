@@ -35,5 +35,14 @@
   "bugs": {
     "url": "https://github.com/KagamiChan/plugin-tweet/issues"
   },
-  "homepage": "https://github.com/KagamiChan/plugin-tweet#readme"
+  "homepage": "https://github.com/KagamiChan/plugin-tweet#readme",
+  "poiPlugin": {
+    "title": "Kancolle Tweets",
+    "description": "Tweets from kancolle staff, based on kcwiki API",
+    "icon": "fa/twitter",
+    "priority": 9,
+    "apiVer": {
+      "6.99.99": "0.1.0"
+    }
+  }
 }
