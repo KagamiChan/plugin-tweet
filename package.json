@@ -1,0 +1,39 @@
+{
+  "name": "poi-plugin-tweet",
+  "version": "0.1.0",
+  "description": "Tweets from kancolle staff, based on kcwiki API",
+  "main": "index.jsx",
+  "dependencies": {
+    "eslint": "^3.18.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-config-airbnb": "^14.1.0",
+    "eslint-plugin-jsx-a11y": "^4.0.0",
+    "eslint-plugin-react": "^6.10.0"
+  },
+  "devDependencies": {
+    "eslint": "^3.18.0",
+    "eslint-config-airbnb": "^14.1.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^4.0.0",
+    "eslint-plugin-react": "^6.10.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KagamiChan/plugin-tweet.git"
+  },
+  "keywords": [
+    "poi",
+    "kancolle",
+    "kcwiki",
+    "twitter"
+  ],
+  "author": "kagami",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/KagamiChan/plugin-tweet/issues"
+  },
+  "homepage": "https://github.com/KagamiChan/plugin-tweet#readme"
+}
