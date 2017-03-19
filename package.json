@@ -1,6 +1,6 @@
 {
   "name": "poi-plugin-tweet",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Tweets from kancolle staff, based on kcwiki API",
   "main": "index.jsx",
   "dependencies": {
