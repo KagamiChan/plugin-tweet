@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { keyBy, sortBy } from 'lodash'
+import { keyBy, sortBy, debounce } from 'lodash'
 import { connect } from 'react-redux'
 import moment from 'moment-timezone'
 import path from 'path'
@@ -12,6 +12,7 @@ import { onAddTweet, reducer as _reducer } from './redux'
 import { PLUGIN_KEY } from './constants'
 import TweetView from './views/tweet-view'
 import { openURL } from './utils'
+import Scheduler from './scheduler'
 
 const { dispatch } = window
 
@@ -35,9 +36,16 @@ const Tweet = connect(
       return this.fetchTweet(`http://api.kcwiki.moe/tweet/date/${date}`)
     })
     await Promise.all(tasks)
+
+    debounce(this.scheduleNextCheck, 1000)()
+  }
+
+  componentWillUnmount() {
+    Scheduler.clear()
   }
 
   async fetchTweet(url) {
+    console.log(`fetching new tweets at ${moment.now()}`)
     const resp = await fetch(url)
     const contentType = resp.headers.get('content-type')
     let json = []
@@ -62,6 +70,35 @@ const Tweet = connect(
 
   handleCheckNew = () => {
     this.fetchTweet(`http://api.kcwiki.moe/tweet/date/${moment().format('YYYYMMDD')}`)
+    Scheduler.clear()
+    this.scheduleNextCheck()
+  }
+
+  scheduleNextCheck = () => {
+    const tz = moment.tz.guess()
+    const currentTime = moment.tz(tz)
+    const currentTimeJP = currentTime.clone().tz('Asia/Tokyo')
+    let nextCheckTime = 0
+    const { tweets } = this.props
+    const recentCount = Object.keys(tweets).filter((id) => {
+      const tweet = tweets[id]
+      const date = moment.tz(tweet.date, 'Asia/Shanghai')
+      if (date.isValid()) {
+        const diff = date.diff(currentTime, 'minutes')
+        return diff > -10
+      }
+      return false
+    }).length
+
+    if (recentCount > 0) {
+      nextCheckTime = currentTime + (Math.max(5.0 / recentCount, 2) * 60 * 1000)
+    } else if (currentTimeJP.hour() > 7 && currentTimeJP.hour() < 11) {
+      nextCheckTime = currentTime + (10 * 60 * 1000)
+    } else {
+      nextCheckTime = currentTime + (20 * 60 * 1000)
+    }
+
+    Scheduler.schedule(this.handleCheckNew, nextCheckTime)
   }
 
   render() {
