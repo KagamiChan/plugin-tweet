@@ -5,13 +5,17 @@ import moment from 'moment-timezone'
 import path from 'path'
 import { Button, Label } from 'react-bootstrap'
 import FontAwesome from 'react-fontawesome'
+import { observe } from 'redux-observers'
+import { store } from 'views/create-store'
+import { promisify } from 'bluebird'
+import { readJson } from 'fs-extra'
 
 import { extensionSelectorFactory } from 'views/utils/selectors'
 
-import { onAddTweet, reducer as _reducer } from './redux'
-import { PLUGIN_KEY } from './constants'
+import { onAddTweet, reducer as _reducer, tweetObserver } from './redux'
+import { PLUGIN_KEY, HISTORY_PATH } from './constants'
 import TweetView from './views/tweet-view'
-import { openURL } from './utils'
+import { openURL, LOCAL_TIMEZONE } from './utils'
 import Scheduler from './scheduler'
 
 const { dispatch } = window
@@ -30,6 +34,7 @@ const Tweet = connect(
   }
 
   async componentDidMount() {
+    this.cancelObserver = observe(store, [tweetObserver])
     const currentTime = moment()
     const tasks = [0, 1, 2].map((day) => {
       const date = currentTime.subtract(day, 'days').format('YYYYMMDD')
@@ -42,10 +47,16 @@ const Tweet = connect(
 
   componentWillUnmount() {
     Scheduler.clear()
+    if (typeof this.cancelObserver !== 'undefined') {
+      this.cancelObserver()
+    }
   }
 
   async fetchTweet(url) {
     console.log(`fetching new tweets at ${moment.now()}`)
+    const history = await promisify(readJson)(HISTORY_PATH)
+    dispatch(onAddTweet(history))
+
     const resp = await fetch(url)
     const contentType = resp.headers.get('content-type')
     let json = []
@@ -75,8 +86,7 @@ const Tweet = connect(
   }
 
   scheduleNextCheck = () => {
-    const tz = moment.tz.guess()
-    const currentTime = moment.tz(tz)
+    const currentTime = moment.tz(LOCAL_TIMEZONE)
     const currentTimeJP = currentTime.clone().tz('Asia/Tokyo')
     let nextCheckTime = 0
     const { tweets } = this.props

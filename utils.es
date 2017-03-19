@@ -2,7 +2,7 @@ import sanitizeHTML from 'sanitize-html'
 import moment from 'moment-timezone'
 import { shell } from 'electron'
 
-const LOCAL_TIMEZONE = moment.tz.guess()
+export const LOCAL_TIMEZONE = moment.tz.guess()
 
 export const safeScreen = text => ({
   __html: sanitizeHTML(text, {
