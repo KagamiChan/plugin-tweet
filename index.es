@@ -27,6 +27,7 @@ const Tweet = connect(
       networkError: false,
     }
   }
+
   async componentDidMount() {
     const currentTime = moment()
     const tasks = [0, 1, 2].map((day) => {

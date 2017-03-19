@@ -1,3 +1,18 @@
 #plugin-tweet {
   margin: 1em;
 }
+
+#plugin-tweet .panel-heading {
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+#plugin-tweet .avatar.small {
+  width: 30px;
+  cursor: pointer;
+  margin-right: 1em;
+}
+
+.plugin-tweet.avatar.large {
+  width: 160px;
+}
