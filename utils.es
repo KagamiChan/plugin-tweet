@@ -1,5 +1,6 @@
 import sanitizeHTML from 'sanitize-html'
 import moment from 'moment-timezone'
+import { shell } from 'electron'
 
 const LOCAL_TIMEZONE = moment.tz.guess()
 
@@ -10,7 +11,6 @@ export const safeScreen = text => ({
 })
 
 export const convertTimeZone = (timeStr, tz = LOCAL_TIMEZONE) => {
-  console.log(timeStr)
   if (!moment(timeStr).isValid()) {
     console.warn(`time string cannot be parsed, ${timeStr}`)
     return timeStr
@@ -18,3 +18,6 @@ export const convertTimeZone = (timeStr, tz = LOCAL_TIMEZONE) => {
   const timeShanghai = moment.tz(timeStr, 'Asia/Shanghai')
   return timeShanghai.clone().tz(tz).format('YYYY-MM-DD HH:mm:ss')
 }
+
+export const openURL = url => () => shell.openExternal(url)
+
