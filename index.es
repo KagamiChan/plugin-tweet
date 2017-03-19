@@ -35,6 +35,8 @@ const Tweet = connect(
 
   async componentDidMount() {
     this.cancelObserver = observe(store, [tweetObserver])
+    const history = await promisify(readJson)(HISTORY_PATH)
+    dispatch(onAddTweet(history))
     const currentTime = moment()
     const tasks = [0, 1, 2].map((day) => {
       const date = currentTime.subtract(day, 'days').format('YYYYMMDD')
@@ -54,8 +56,6 @@ const Tweet = connect(
 
   async fetchTweet(url) {
     console.log(`fetching new tweets at ${moment.now()}`)
-    const history = await promisify(readJson)(HISTORY_PATH)
-    dispatch(onAddTweet(history))
 
     const resp = await fetch(url)
     const contentType = resp.headers.get('content-type')
