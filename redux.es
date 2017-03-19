@@ -51,7 +51,6 @@ export const tweetObserver = observer(
       if (currentLatest.date > (prevLatest.date || 0)) {
         let lastTweet = sortedCurrent.pop()
         while (!(lastTweet.id in previous) && sortedCurrent.length > 0) {
-          console.log(lastTweet)
           window.toast(safeScreen(lastTweet.zh || lastTweet.jp).__html)
           lastTweet = sortedCurrent.pop()
         }
