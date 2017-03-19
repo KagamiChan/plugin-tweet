@@ -1,33 +1,16 @@
 import React, { Component } from 'react'
 import { keyBy, sortBy } from 'lodash'
 import { connect } from 'react-redux'
-import { Panel, ListGroup, ListGroupItem } from 'react-bootstrap'
-import sanitizeHTML from 'sanitize-html'
 import moment from 'moment-timezone'
+import path from 'path'
 
 import { extensionSelectorFactory } from 'views/utils/selectors'
 
 import { onAddTweet, reducer as _reducer } from './redux'
 import { PLUGIN_KEY } from './constants'
+import TweetView from './views/tweet-view'
 
 const { dispatch } = window
-const LOCAL_TIMEZONE = moment.tz.guess()
-
-const safeScreen = text => ({
-  __html: sanitizeHTML(text, {
-    allowedTags: ['br'],
-  }),
-})
-
-const convertTimeZone = (timeStr, tz = LOCAL_TIMEZONE) => {
-  console.log(timeStr)
-  if (!moment(timeStr).isValid()) {
-    console.warn(`time string cannot be parsed, ${timeStr}`)
-    return timeStr
-  }
-  const timeShanghai = moment.tz(timeStr, 'Asia/Shanghai')
-  return timeShanghai.clone().tz(tz).format('YYYY-MM-DD HH:mm:ss')
-}
 
 const Tweet = connect(
   state => ({
@@ -62,16 +45,12 @@ class Tweet extends Component {
   render() {
     const { tweets } = this.props
     return (
-      <div>
+      <div id="plugin-tweet">
+        <link href={path.join(__dirname, 'assets', 'style.css')} rel="stylesheet" />
         {
           sortBy(Object.keys(tweets)).reverse().map(id =>
-              <Panel key={id} header={convertTimeZone(tweets[id].date)} bsStyle="info">
-                <ListGroup fill>
-                  <ListGroupItem dangerouslySetInnerHTML={safeScreen(tweets[id].jp || '')} />
-                  <ListGroupItem dangerouslySetInnerHTML={safeScreen(tweets[id].zh || '')} />
-                </ListGroup>
-              </Panel>
-              )
+            <TweetView key={id} tweet={tweets[id]} />
+          )
         }
       </div>
     )
