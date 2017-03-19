@@ -3,6 +3,8 @@ import { keyBy, sortBy } from 'lodash'
 import { connect } from 'react-redux'
 import moment from 'moment-timezone'
 import path from 'path'
+import { Button } from 'react-bootstrap'
+import FontAwesome from 'react-fontawesome'
 
 import { extensionSelectorFactory } from 'views/utils/selectors'
 
@@ -47,6 +49,17 @@ class Tweet extends Component {
     return (
       <div id="plugin-tweet">
         <link href={path.join(__dirname, 'assets', 'style.css')} rel="stylesheet" />
+        <header>
+          <Button title="@Kancolle-STAFF" >
+            <FontAwesome name="twitter" />
+          </Button>
+          <Button title="kcwiki forwarding" >
+            <FontAwesome name="book" />
+          </Button>
+          <Button title="Check news" >
+            <FontAwesome name="refresh" />
+          </Button>
+        </header>
         {
           sortBy(Object.keys(tweets)).reverse().map(id =>
             <TweetView key={id} tweet={tweets[id]} />
