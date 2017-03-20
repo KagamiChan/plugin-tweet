@@ -158,7 +158,7 @@ const Tweet = connect(
               }
             </Button>
             <Button title="Check next maintenance time" onClick={this.handleFetchMaintenance}>
-              Next maintenance:
+              <FontAwesome name="calendar-plus-o" />
               {
                 nextMaintenance - moment() > 0
                 ? nextMaintenance.format(' YYYY-MM-DD HH:mm')
