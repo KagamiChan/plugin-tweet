@@ -48,6 +48,7 @@ export const tweetObserver = observer(
       // if sortedPrevious is empty, prevLatest will be an empty object
       // then the prevLatest.date will be undefined, which is expected
       // to prevent first load notification
+      // console.log(currentLatest, currentLatest.date, prevLatest, prevLatest.date)
       if (currentLatest.date > (prevLatest.date || 0)) {
         let lastTweet = sortedCurrent.pop()
         while (!(lastTweet.id in previous) && sortedCurrent.length > 0) {

@@ -3,7 +3,7 @@ import { keyBy, sortBy, debounce } from 'lodash'
 import { connect } from 'react-redux'
 import moment from 'moment-timezone'
 import path from 'path'
-import { Button, Label } from 'react-bootstrap'
+import { Button, Label, ButtonGroup } from 'react-bootstrap'
 import FontAwesome from 'react-fontawesome'
 import { observe } from 'redux-observers'
 import { store } from 'views/create-store'
@@ -30,11 +30,14 @@ const Tweet = connect(
 
     this.state = {
       networkError: false,
+      nextMaintenance: moment(),
     }
   }
 
   async componentDidMount() {
     this.cancelObserver = observe(store, [tweetObserver])
+
+    await this.fetchMaintenance()
 
     try {
       const history = await promisify(readJson)(HISTORY_PATH)
@@ -60,6 +63,18 @@ const Tweet = connect(
     }
   }
 
+  async fetchMaintenance() {
+    const resp = await fetch('https://zh.kcwiki.moe/api.php?action=parse&page=Template:%E7%BB%B4%E6%8A%A4%E5%80%92%E6%95%B0&prop=wikitext&format=json')
+
+    const text = await resp.text()
+
+    const nextTime = text.match(/\d{4}(?:\/\d{1,2}){2} \d{1,2}(?::\d{1,2}){2} \+\d{4}/)
+
+    this.setState({
+      nextMaintenance: moment(nextTime, 'YYYY/MM/DD hh:mm:ss Z'),
+    })
+  }
+
   async fetchTweet(url) {
     console.log(`fetching new tweets at ${moment.now()}`)
 
@@ -79,7 +94,7 @@ const Tweet = connect(
     }
 
     if (this.state.networkError !== networkError) {
-      this.setSate({
+      this.setState({
         networkError,
       })
     }
@@ -89,6 +104,10 @@ const Tweet = connect(
     this.fetchTweet(`http://api.kcwiki.moe/tweet/date/${moment().format('YYYYMMDD')}`)
     Scheduler.clear()
     this.scheduleNextCheck()
+  }
+
+  handleFetchMaintenance = () => {
+    this.fetchMaintenance()
   }
 
   scheduleNextCheck = () => {
@@ -119,26 +138,34 @@ const Tweet = connect(
 
   render() {
     const { tweets } = this.props
-    const { networkError } = this.state
+    const { networkError, nextMaintenance } = this.state
     return (
       <div id="plugin-tweet">
         <link href={path.join(__dirname, 'assets', 'style.css')} rel="stylesheet" />
         <header>
-          <Button title="@Kancolle-STAFF" onClick={openURL('https://twitter.com/KanColle_STAFF')}>
-            <FontAwesome name="twitter" />
-          </Button>
-          <Button title="kcwiki forwarding" onClick={openURL('https://t.kcwiki.moe/')}>
-            <FontAwesome name="book" />
-          </Button>
-          <Button title="Check news" onClick={this.handleCheckNew}>
-            <FontAwesome name="refresh" />
-          </Button>
-          {
-            networkError &&
-            <Label bsStyle="danger">
-              <FontAwesome name="unlink" /> Network Error
-            </Label>
-          }
+          <ButtonGroup block>
+            <Button title="@Kancolle-STAFF" onClick={openURL('https://twitter.com/KanColle_STAFF')}>
+              <FontAwesome name="twitter" />
+            </Button>
+            <Button title="kcwiki forwarding" onClick={openURL('https://t.kcwiki.moe/')}>
+              <FontAwesome name="book" />
+            </Button>
+            <Button title="Check news" onClick={this.handleCheckNew}>
+              {
+                networkError
+                ? <a><FontAwesome name="unlink" /> Network Error</a>
+                : <a><FontAwesome name="refresh" /></a>
+              }
+            </Button>
+            <Button title="Check next maintenance time" onClick={this.handleFetchMaintenance}>
+              Next maintenance:
+              {
+                nextMaintenance - moment() > 0
+                ? nextMaintenance.format(' YYYY-MM-DD HH:mm')
+                : ' Unknown'
+              }
+            </Button>
+          </ButtonGroup>
         </header>
         {
           sortBy(Object.keys(tweets)).reverse().map(id =>
