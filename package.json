@@ -1,14 +1,9 @@
 {
   "name": "poi-plugin-tweet",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Tweets from kancolle staff, based on kcwiki API",
   "main": "index.jsx",
   "dependencies": {
-    "eslint": "^3.18.0",
-    "eslint-config-airbnb": "^14.1.0",
-    "eslint-plugin-import": "^2.2.0",
-    "eslint-plugin-jsx-a11y": "^4.0.0",
-    "eslint-plugin-react": "^6.10.0",
     "moment-timezone": "^0.5.11",
     "sanitize-html": "^1.14.1"
   },
